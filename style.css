@@ -1,0 +1,75 @@
+.table-auto {
+    border-collapse: collapse;
+}
+
+.table-auto th,
+.table-auto td {
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+}
+
+#deleteAllModal {
+    display: none;
+}
+
+#deleteAllModal.show {
+    display: flex;
+}
+
+/* CSS cho modal */
+.modal {
+    display: none;
+    /* Mặc định ẩn cửa sổ */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Màu nền mờ */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 20% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+#paginationButtonsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    /* Điều chỉnh khoảng cách với phần tử trên */
+}
+
+.pagination-button {
+    margin: 0 10px;
+    /* Điều chỉnh khoảng cách giữa các nút */
+}
