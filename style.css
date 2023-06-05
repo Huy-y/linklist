@@ -66,10 +66,18 @@
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    /* Điều chỉnh khoảng cách với phần tử trên */
 }
 
 .pagination-button {
     margin: 0 10px;
-    /* Điều chỉnh khoảng cách giữa các nút */
+}
+
+.light {
+    background-color: #ffffff;
+    color: #2d3748;
+}
+
+.dark {
+    background-color: #2d3748;
+    color: #ffffff;
 }

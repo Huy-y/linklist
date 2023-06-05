@@ -161,10 +161,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Hàm xóa tất cả liên kết
     function deleteAllLinks() {
-        if (deleteConfirmed) { // Chỉ xóa liên kết nếu đã được xác nhận
+        if (confirmDeleteCheckbox.checked) {
             links = [];
             saveLinksToLocalStorage();
             renderLinks();
+            deleteAllModal.style.display = 'none';
+        } else {
+            alert('Vui lòng xác nhận xóa tất cả liên kết');
         }
         deleteAllModal.style.display = 'none';
     }
@@ -187,4 +190,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     renderLinks();
+});
+
+// Lấy thẻ body
+const body = document.body;
+
+// Lấy thẻ toggle theme
+const themeToggle = document.getElementById('theme-toggle');
+
+// Xử lý sự kiện khi nhấp vào toggle theme
+themeToggle.addEventListener('click', () => {
+    // Toggle chế độ light và dark theme
+    body.classList.toggle('light');
+    body.classList.toggle('dark');
+
+    // Cập nhật biểu tượng theme
+    const themeIcon = document.getElementById('theme-icon');
+    themeIcon.classList.toggle('fa-sun');
+    themeIcon.classList.toggle('fa-moon');
+});
+
+// Kiểm tra nếu đã lưu trạng thái theme trước đó
+if (localStorage.getItem('theme') === 'dark') {
+    // Nếu đã lưu trạng thái dark theme trước đó, thì áp dụng dark theme
+    body.classList.add('dark');
+    const themeIcon = document.getElementById('theme-icon');
+    themeIcon.classList.add('fa-sun');
+} else {
+    // Nếu chưa lưu trạng thái hoặc đã lưu trạng thái light theme, áp dụng light theme
+    body.classList.add('light');
+    const themeIcon = document.getElementById('theme-icon');
+    themeIcon.classList.add('fa-moon');
+}
+
+// Lưu trạng thái theme vào localStorage khi chuyển đổi theme
+themeToggle.addEventListener('click', () => {
+    const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
+    localStorage.setItem('theme', currentTheme);
 });
