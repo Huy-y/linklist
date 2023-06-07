@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteAllButton = document.getElementById('deleteAllButton');
     const prevPageButton = document.getElementById('prevPageButton');
     const nextPageButton = document.getElementById('nextPageButton');
+    const searchAllButton = document.getElementById('searchAllButton');
 
 
     let links = JSON.parse(localStorage.getItem('links')) || [];
@@ -79,6 +80,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Kiểm tra link tồn tại không
+    function checkLinkExists(link) {
+        const index = links.findIndex(item => item.link === link);
+        return index !== -1 ? index + 1 : false;
+    }
+
+    function checkDuplicateLinks(link) {
+        const duplicateIndexes = [];
+        links.forEach((item, index) => {
+            if (item.link === link) {
+                duplicateIndexes.push(index + 1);
+            }
+        });
+        return duplicateIndexes;
+    }
+
     linkForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const link = linkInput.value.trim();
@@ -88,13 +105,46 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        links.push({ link, note });
-        saveLinksToLocalStorage();
-        renderLinks();
+        const duplicateIndexes = [];
+        links.forEach((item, index) => {
+            if (item.link === link) {
+                duplicateIndexes.push(index + 1);
+            }
+        });
 
-        linkInput.value = '';
-        noteInput.value = '';
+        if (duplicateIndexes.length > 0) {
+            const duplicateMessage = `Link đã tồn tại ở dòng ${duplicateIndexes.join(', ')}<br><span id="duplicate-message"><strong>Bạn có muốn tiếp tục thêm?</strong></span>`;
+            Swal.fire({
+                title: 'Link đã tồn tại',
+                html: duplicateMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Thêm',
+                cancelButtonText: 'Hủy',
+                allowOutsideClick: !isModalOpen, // Không cho phép nhấp bên ngoài hộp thoại nếu hộp thoại đã mở
+                allowEscapeKey: !isModalOpen, // Không cho phép nhấn phím Escape nếu hộp thoại đã mở
+            }).then((result) => {
+                isModalOpen = true; // Đánh dấu là hộp thoại đã mở
+                if (result.isConfirmed) {
+                    links.push({ link, note });
+                    saveLinksToLocalStorage();
+                    renderLinks();
+
+                    linkInput.value = '';
+                    noteInput.value = '';
+                }
+                isModalOpen = false; // Đánh dấu là hộp thoại đã đóng
+            });
+        } else {
+            links.push({ link, note });
+            saveLinksToLocalStorage();
+            renderLinks();
+
+            linkInput.value = '';
+            noteInput.value = '';
+        }
     });
+
 
     linkList.addEventListener('click', function (event) {
         const target = event.target;
@@ -158,37 +208,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     let deleteConfirmed = false; // Cờ xác định xem người dùng đã xác nhận xóa hay chưa
+    let isModalOpen = false;
+    let isDeleteAllConfirmed = false;
 
     // Hàm xóa tất cả liên kết
     function deleteAllLinks() {
-        if (confirmDeleteCheckbox.checked) {
+        const deleteConfirmationCheckbox = document.getElementById('confirmDeleteCheckbox');
+        if (deleteConfirmationCheckbox.checked) {
             links = [];
             saveLinksToLocalStorage();
             renderLinks();
             deleteAllModal.style.display = 'none';
+
+            // Clear the input fields
+            linkInput.value = '';
+            noteInput.value = '';
         } else {
             alert('Vui lòng xác nhận xóa tất cả liên kết');
         }
-        deleteAllModal.style.display = 'none';
     }
 
     // Sự kiện "click" của nút xóa tất cả
     deleteAllButton.addEventListener('click', function () {
-        deleteConfirmed = false; // Đặt lại cờ xác nhận thành false
+        if (isModalOpen) {
+            return; // Không làm gì nếu hộp thoại đã mở
+        }
+
+        isDeleteAllConfirmed = false; // Đặt lại cờ xác nhận thành false
         deleteAllModal.style.display = 'block';
     });
 
     // Sự kiện "click" của nút xác nhận xóa tất cả
     confirmDeleteAllButton.addEventListener('click', function () {
-        deleteConfirmed = true; // Đánh dấu là người dùng đã xác nhận xóa
-        deleteAllLinks();
+        isDeleteAllConfirmed = true; // Đánh dấu là người dùng đã xác nhận xóa
+
+        if (!isModalOpen) { // Kiểm tra nếu hộp thoại không mở
+            deleteAllLinks(); // Gọi hàm xóa tất cả liên kết
+        }
     });
 
     // Sự kiện "click" của nút hủy xóa tất cả
     cancelDeleteAllButton.addEventListener('click', function () {
+        isDeleteAllConfirmed = false; // Đặt lại cờ xác nhận thành false
         deleteAllModal.style.display = 'none';
     });
-
     renderLinks();
 });
 
