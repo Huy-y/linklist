@@ -230,13 +230,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Sự kiện "click" của nút xóa tất cả
     deleteAllButton.addEventListener('click', function () {
-        if (isModalOpen) {
-            return; // Không làm gì nếu hộp thoại đã mở
-        }
-
-        isDeleteAllConfirmed = false; // Đặt lại cờ xác nhận thành false
-        deleteAllModal.style.display = 'block';
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Bạn không thể hoàn tác bước này',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa tất cả',
+            cancelButtonText: 'Hủy',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                links = [];
+                saveLinksToLocalStorage();
+                renderLinks();
+                Swal.fire('Đã xóa', 'Tất cả link đã được xóa', 'success');
+            }
+        });
     });
+
 
     // Sự kiện "click" của nút xác nhận xóa tất cả
     confirmDeleteAllButton.addEventListener('click', function () {
